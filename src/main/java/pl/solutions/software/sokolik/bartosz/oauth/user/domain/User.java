@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Data
@@ -53,14 +55,20 @@ public class User implements UserDetails {
   @Column(name = "enabled")
   private boolean enabled;
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(name = "users_authorities",
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+  @JoinTable(name = "users_roles",
       joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-      inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
-  private Set<Authority> authorities = new HashSet<>();
+      inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+  private Set<Role> roles = new HashSet<>();
 
   @Override
-  public Collection<Authority> getAuthorities() {
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    Set<GrantedAuthority> authorities = new HashSet<>();
+    getRoles().stream().peek(authorities::add)
+        .map(Role::getAuthorities)
+        .flatMap(Collection::stream)
+        .forEach(authorities::add);
+
     return authorities;
   }
 
