@@ -1,8 +1,5 @@
 package pl.solutions.software.sokolik.bartosz.oauth.user.domain;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,9 +18,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   @Override
   @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByUsername(username).orElseThrow(RuntimeException::new);
-//    return user;
-    return new org.springframework.security.core.userdetails.User(user.getUsername(),
-        user.getPassword(), user.getAuthorities());
+    return userRepository.findByUsername(username).orElseThrow(RuntimeException::new);
   }
 }
