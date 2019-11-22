@@ -1,0 +1,4 @@
+check:
+  token:
+    endpoint:
+      url: 'http://localhost:8081/oauth/check_token'
