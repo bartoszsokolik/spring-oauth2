@@ -21,7 +21,7 @@ import org.springframework.security.core.GrantedAuthority;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "authorities")
+@Table(name = "user_authorities")
 public class Authority implements GrantedAuthority {
 
   @Id
