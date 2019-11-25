@@ -26,6 +26,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Value("${access.token.validity:3600}")
     private int accessTokenValidity;
 
@@ -35,11 +38,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Bean
     public TokenStore tokenStore() {
         return new JdbcTokenStore(dataSource);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Override
@@ -52,7 +50,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.jdbc(dataSource)
             .withClient("sampleClientId")
-            .secret(passwordEncoder().encode("sampleClientSecret"))
+            .secret(passwordEncoder.encode("sampleClientSecret"))
             .authorizedGrantTypes("password", "authorization_code", "refresh_token")
             .accessTokenValiditySeconds(accessTokenValidity)
             .refreshTokenValiditySeconds(refreshTokenValidity)
